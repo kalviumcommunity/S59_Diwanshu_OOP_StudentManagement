@@ -4,91 +4,128 @@
 
 using namespace std;
 
-
-class Fee {
+class Fee
+{
 private:
-  float totalFee ;
-  float feePaid ;
-public :
-  Fee (float totalFee) : totalFee(totalFee) , feePaid(0) {}
-  
-   void makePayment(float amount){
-     if(amount > 0 && feePaid + amount <= totalFee) {
-        feePaid += amount ;
-         cout << "Payment of " << amount << " made Successfully . " <<endl ;
-     } else {
-         cout << "Invalid payment amount. Please check the balance." << endl;
-     }
+    float totalFee;
+    float feePaid;
 
-   }
+public:
+    Fee(float totalFee) : totalFee(totalFee), feePaid(0) {}
 
-   void displayFeeDetails()
-   {
-       cout << "Total Fee: " << totalFee << "\nFee Paid: " << feePaid << "\nRemaining Balance: " << totalFee - feePaid << endl;
-   }
+    void makePayment(float amount)
+    {
+        if (amount > 0 && feePaid + amount <= totalFee)
+        {
+            feePaid += amount;
+            cout << "Payment of " << amount << " made successfully." << endl;
+        }
+        else
+        {
+            cout << "Invalid payment amount. Please check the balance." << endl;
+        }
+    }
+
+    void displayFeeDetails()
+    {
+        cout << "Total Fee: " << totalFee << "\nFee Paid: " << feePaid << "\nRemaining Balance: " << totalFee - feePaid << endl;
+    }
 };
-class Student {
+
+class Student
+{
 private:
     string name;
     long long int rollNumber;
     Fee fee;
+
 public:
-   Student( string n , long long int r , float totalFee) : name(n) , rollNumber(r) , fee(totalFee) {}
+    Student() : name(""), rollNumber(0), fee(0.0) {}
+    Student(string n, long long int r, float totalFee) : name(n), rollNumber(r), fee(totalFee) {}
 
     Student &updateDetails(string name, long long int rollNumber)
-   {
-       this->name = name;
-       this->rollNumber = rollNumber;
-       return *this;
-     }
+    {
+        this->name = name;
+        this->rollNumber = rollNumber;
+        return *this;
+    }
 
-     void makeFeePayment(float amount)
-     {
-         fee.makePayment(amount);
-     }
+    void makeFeePayment(float amount)
+    {
+        fee.makePayment(amount);
+    }
 
-
-       void displayData()
-       {
-           cout << "Name: " << name << "\nRoll Number: " << this->rollNumber << endl;
-           fee.displayFeeDetails();
-       }
-   };
-
-class Course {
-private:
-   string courseName;
-   int courseCode ;
-public : 
-  Course( string cn , int cc) : courseName(cn) , courseCode(cc) {}
-
-  void displayCourseDetails() {
-    cout << "Course Name: " << courseName << "\nCourse Code: " << courseCode << endl ;
-  }
-
-  void updateCourseDetails ( string cn , int cc) {
-    courseName = cn ;
-    courseCode = cc ;
-  }
-
+    void displayData()
+    {
+        cout << "Name: " << name << "\nRoll Number: " << rollNumber << endl;
+        fee.displayFeeDetails();
+    }
 };
 
-int main(){
-    Student student1("Sujal", 2311981614, 5000.0);
-    student1.displayData();
+class Course
+{
+private:
+    string courseName;
+    int courseCode;
 
-    student1.makeFeePayment(1500.0);
-    student1.displayData();
+public:
+    Course(string cn, int cc) : courseName(cn), courseCode(cc) {}
 
-    Course course1("Mathematics", 301);
-    course1.displayCourseDetails();
+    void displayCourseDetails()
+    {
+        cout << "Course Name: " << courseName << "\nCourse Code: " << courseCode << endl;
+    }
 
-    student1.updateDetails("Diwanshu", 2311981618);
-    student1.displayData();
+    void updateCourseDetails(string cn, int cc)
+    {
+        courseName = cn;
+        courseCode = cc;
+    }
+};
 
+int main()
+{
+    int numStudents;
+    cout << "Enter the number of students: ";
+    cin >> numStudents;
 
-    course1.updateCourseDetails("Physics", 302);
-    course1.displayCourseDetails();
+    Student *students = new Student[numStudents];
+
+    
+    for (int i = 0; i < numStudents; ++i)
+    {
+        string name;
+        long long int rollNumber;
+        float totalFee;
+
+        cout << "Enter details for student " << i + 1 << ":\n";
+        cout << "Name: ";
+        cin >> name;
+        cout << "Roll Number: ";
+        cin >> rollNumber;
+        cout << "Total Fee: ";
+        cin >> totalFee;
+
+        students[i] = Student(name, rollNumber, totalFee);
+    }
+
+   
+    for (int i = 0; i < numStudents; ++i)
+    {
+        cout << "\nDetails of student " << i + 1 << ":\n";
+        students[i].displayData();
+
+       
+        float payment;
+        cout << "Enter payment amount for student " << i + 1 << ": ";
+        cin >> payment;
+        students[i].makeFeePayment(payment);
+
+        
+        students[i].displayData();
+    }
+
+    delete[] students;
 
     return 0;
 }

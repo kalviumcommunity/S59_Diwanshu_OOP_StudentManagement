@@ -38,11 +38,22 @@ private:
     string name;
     long long int rollNumber;
     Fee fee;
+    static int studentNumber;
 
 public:
-    Student() : name(""), rollNumber(0), fee(0.0) {}
-    Student(string n, long long int r, float totalFee) : name(n), rollNumber(r), fee(totalFee) {}
+    Student() : name(""), rollNumber(0), fee(0.0)
+    {
+        studentNumber++;
+    }
+    Student(string n, long long int r, float totalFee) : name(n), rollNumber(r), fee(totalFee)
+    {
+        studentNumber++;
+    }
 
+    static int getTotalStudent()
+    {
+        return studentNumber;
+    }
     Student &updateDetails(string name, long long int rollNumber)
     {
         this->name = name;
@@ -60,7 +71,13 @@ public:
         cout << "Name: " << name << "\nRoll Number: " << rollNumber << endl;
         fee.displayFeeDetails();
     }
+    ~Student()
+    {
+        studentNumber--;
+    }
 };
+
+int Student::studentNumber = 0;
 
 class Course
 {
@@ -91,7 +108,6 @@ int main()
 
     Student *students = new Student[numStudents];
 
-    
     for (int i = 0; i < numStudents; ++i)
     {
         string name;
@@ -109,21 +125,20 @@ int main()
         students[i] = Student(name, rollNumber, totalFee);
     }
 
-   
     for (int i = 0; i < numStudents; ++i)
     {
         cout << "\nDetails of student " << i + 1 << ":\n";
         students[i].displayData();
 
-       
         float payment;
         cout << "Enter payment amount for student " << i + 1 << ": ";
         cin >> payment;
         students[i].makeFeePayment(payment);
 
-        
         students[i].displayData();
     }
+
+    cout << "Total Students: " << Student::getTotalStudent() << endl;
 
     delete[] students;
 

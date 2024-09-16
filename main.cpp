@@ -38,21 +38,21 @@ private:
     string name;
     long long int rollNumber;
     Fee fee;
-    static int studentNumber;
+    static int totalStudents;
 
 public:
     Student() : name(""), rollNumber(0), fee(0.0)
     {
-        studentNumber++;
+        totalStudents++;
     }
     Student(string n, long long int r, float totalFee) : name(n), rollNumber(r), fee(totalFee)
     {
-        studentNumber++;
+        totalStudents++;
     }
 
     static int getTotalStudent()
     {
-        return studentNumber;
+        return totalStudents;
     }
     Student &updateDetails(string name, long long int rollNumber)
     {
@@ -73,21 +73,28 @@ public:
     }
     ~Student()
     {
-        studentNumber--;
+        totalStudents--;
     }
 };
 
-int Student::studentNumber = 0;
+int Student::totalStudents = 0;
 
 class Course
 {
 private:
     string courseName;
     int courseCode;
+    static int totalCourses;
 
 public:
-    Course(string cn, int cc) : courseName(cn), courseCode(cc) {}
+    Course(string cn, int cc) : courseName(cn), courseCode(cc) {
+        totalCourses++ ;
+    }
 
+    static int getTotalCourses()
+    {
+        return totalCourses;
+    }
     void displayCourseDetails()
     {
         cout << "Course Name: " << courseName << "\nCourse Code: " << courseCode << endl;
@@ -98,8 +105,14 @@ public:
         courseName = cn;
         courseCode = cc;
     }
+
+    ~Course()
+    {
+        totalCourses--;
+    }
 };
 
+int Course::totalCourses = 0;
 int main()
 {
     int numStudents;
@@ -139,6 +152,7 @@ int main()
     }
 
     cout << "Total Students: " << Student::getTotalStudent() << endl;
+    cout << "Total Courses: " << Course::getTotalCourses() << endl;
 
     delete[] students;
 

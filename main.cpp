@@ -11,8 +11,22 @@ private:
     float feePaid;
 
 public:
+    
     Fee(float totalFee) : totalFee(totalFee), feePaid(0) {}
 
+    
+    float getTotalFee() const
+    {
+        return totalFee;
+    }
+
+   
+    float getFeePaid() const
+    {
+        return feePaid;
+    }
+
+  
     void makePayment(float amount)
     {
         if (amount > 0 && feePaid + amount <= totalFee)
@@ -41,36 +55,60 @@ private:
     static int totalStudents;
 
 public:
+  
     Student() : name(""), rollNumber(0), fee(0.0)
     {
         totalStudents++;
     }
+
+
     Student(string n, long long int r, float totalFee) : name(n), rollNumber(r), fee(totalFee)
     {
         totalStudents++;
+    }
+
+ 
+    string getName() const
+    {
+        return name;
+    }
+
+    long long int getRollNumber() const
+    {
+        return rollNumber;
+    }
+
+  
+    void setName(string newName)
+    {
+        name = newName;
+    }
+
+   
+    void setRollNumber(long long int newRollNumber)
+    {
+        rollNumber = newRollNumber;
     }
 
     static int getTotalStudent()
     {
         return totalStudents;
     }
-    Student &updateDetails(string name, long long int rollNumber)
-    {
-        this->name = name;
-        this->rollNumber = rollNumber;
-        return *this;
-    }
 
+   
     void makeFeePayment(float amount)
     {
         fee.makePayment(amount);
     }
 
+   
     void displayData()
     {
         cout << "Name: " << name << "\nRoll Number: " << rollNumber << endl;
         fee.displayFeeDetails();
     }
+
+   
     ~Student()
     {
         totalStudents--;
@@ -87,23 +125,43 @@ private:
     static int totalCourses;
 
 public:
-    Course(string cn, int cc) : courseName(cn), courseCode(cc) {
-        totalCourses++ ;
+   
+    Course(string cn, int cc) : courseName(cn), courseCode(cc)
+    {
+        totalCourses++;
+    }
+
+  
+    string getCourseName() const
+    {
+        return courseName;
+    }
+
+  
+    int getCourseCode() const
+    {
+        return courseCode;
+    }
+
+    void setCourseName(string cn)
+    {
+        courseName = cn;
+    }
+
+   
+    void setCourseCode(int cc)
+    {
+        courseCode = cc;
     }
 
     static int getTotalCourses()
     {
         return totalCourses;
     }
+
     void displayCourseDetails()
     {
         cout << "Course Name: " << courseName << "\nCourse Code: " << courseCode << endl;
-    }
-
-    void updateCourseDetails(string cn, int cc)
-    {
-        courseName = cn;
-        courseCode = cc;
     }
 
     ~Course()
@@ -113,6 +171,7 @@ public:
 };
 
 int Course::totalCourses = 0;
+
 int main()
 {
     int numStudents;

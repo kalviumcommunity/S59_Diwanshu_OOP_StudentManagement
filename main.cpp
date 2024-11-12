@@ -4,8 +4,7 @@
 
 using namespace std;
 
-class Fee
-{
+class Fee {
 private:
     float totalFee;
     float feePaid;
@@ -16,27 +15,21 @@ public:
     float getTotalFee() const { return totalFee; }
     float getFeePaid() const { return feePaid; }
 
-    void makePayment(float amount)
-    {
-        if (amount > 0 && feePaid + amount <= totalFee)
-        {
+    void makePayment(float amount) {
+        if (amount > 0 && feePaid + amount <= totalFee) {
             feePaid += amount;
             cout << "Payment of " << amount << " made successfully." << endl;
-        }
-        else
-        {
+        } else {
             cout << "Invalid payment amount. Please check the balance." << endl;
         }
     }
 
-    void displayFeeDetails()
-    {
+    void displayFeeDetails() const {
         cout << "Total Fee: " << totalFee << "\nFee Paid: " << feePaid << "\nRemaining Balance: " << totalFee - feePaid << endl;
     }
 };
 
-class Student
-{
+class Student {
 protected:
     string name;
     long long int rollNumber;
@@ -52,10 +45,20 @@ public:
     static int getTotalStudent() { return totalStudents; }
 
     void makeFeePayment(float amount) { fee.makePayment(amount); }
-    virtual void displayData()
-    {
+
+    // Function Overloading: Overloaded displayData() to show different outputs
+    void displayData() const {
+        cout << "Student Info: \n";
         cout << "Name: " << name << "\nRoll Number: " << rollNumber << endl;
         fee.displayFeeDetails();
+    }
+
+    void displayData(bool showFee) const {
+        cout << "Student Info: \n";
+        cout << "Name: " << name << "\nRoll Number: " << rollNumber << endl;
+        if (showFee) {
+            fee.displayFeeDetails();
+        }
     }
 
     ~Student() { totalStudents--; }
@@ -63,24 +66,7 @@ public:
 
 int Student::totalStudents = 0;
 
-// Single Inheritance: UndergraduateStudent inherits from Student
-class UndergraduateStudent : public Student
-{
-private:
-    string major;
-
-public:
-    UndergraduateStudent(string n, long long int r, float totalFee, string m) : Student(n, r, totalFee), major(m) {}
-
-    void displayData() override
-    {
-        Student::displayData();
-        cout << "Major: " << major << endl;
-    }
-};
-
-class Course
-{
+class Course {
 protected:
     string courseName;
     int courseCode;
@@ -93,8 +79,7 @@ public:
     int getCourseCode() const { return courseCode; }
     static int getTotalCourses() { return totalCourses; }
 
-    virtual void displayCourseDetails()
-    {
+    virtual void displayCourseDetails() const {
         cout << "Course Name: " << courseName << "\nCourse Code: " << courseCode << endl;
     }
 
@@ -103,73 +88,68 @@ public:
 
 int Course::totalCourses = 0;
 
-// Multilevel Inheritance: AdvancedCourse inherits from Course, GraduateCourse inherits from AdvancedCourse
-class AdvancedCourse : public Course
-{
-protected:
-    int difficultyLevel;
-
-public:
-    AdvancedCourse(string cn, int cc, int level) : Course(cn, cc), difficultyLevel(level) {}
-
-    void displayCourseDetails() override
-    {
-        Course::displayCourseDetails();
-        cout << "Difficulty Level: " << difficultyLevel << endl;
-    }
-};
-
-class GraduateCourse : public AdvancedCourse
-{
+// Undergraduate class derived from Student (Inheritance example)
+class Undergraduate : public Student {
 private:
-    string researchArea;
+    string major;
 
 public:
-    GraduateCourse(string cn, int cc, int level, string area) : AdvancedCourse(cn, cc, level), researchArea(area) {}
+    Undergraduate(string n, long long int r, float totalFee, string m)
+        : Student(n, r, totalFee), major(m) {}
 
-    void displayCourseDetails() override
-    {
-        AdvancedCourse::displayCourseDetails();
-        cout << "Research Area: " << researchArea << endl;
+    void displayData() const {
+        cout << "Undergraduate Student Info:\n";
+        cout << "Name: " << name << "\nRoll Number: " << rollNumber << "\nMajor: " << major << endl;
+        fee.displayFeeDetails();
     }
 };
 
-int main()
-{
-    // Input and display for UndergraduateStudent
-    string uName, uMajor;
-    long long int uRollNumber;
-    float uTotalFee;
-    
-    cout << "Enter details for an Undergraduate Student:\n";
+// Graduate class derived from Student (Inheritance example)
+class Graduate : public Student {
+private:
+    string researchTopic;
+
+public:
+    Graduate(string n, long long int r, float totalFee, string rt)
+        : Student(n, r, totalFee), researchTopic(rt) {}
+
+    void displayData() const {
+        cout << "Graduate Student Info:\n";
+        cout << "Name: " << name << "\nRoll Number: " << rollNumber << "\nResearch Topic: " << researchTopic << endl;
+        fee.displayFeeDetails();
+    }
+};
+
+int main() {
+    string sName, major, researchTopic;
+    long long int sRollNumber;
+    float sTotalFee;
+    int choice;
+
+    cout << "Choose type of student:\n1. Undergraduate\n2. Graduate\n";
+    cin >> choice;
+
+    cout << "Enter details:\n";
     cout << "Name: ";
-    cin >> uName;
+    cin >> sName;
     cout << "Roll Number: ";
-    cin >> uRollNumber;
+    cin >> sRollNumber;
     cout << "Total Fee: ";
-    cin >> uTotalFee;
-    cout << "Major: ";
-    cin >> uMajor;
+    cin >> sTotalFee;
 
-    UndergraduateStudent uStudent(uName, uRollNumber, uTotalFee, uMajor);
-    uStudent.displayData();
-
-    // Input and display for GraduateCourse
-    string gCourseName, gResearchArea;
-    int gCourseCode, gDifficultyLevel;
-
-    cout << "\nEnter details for a Graduate Course:\n";
-    cout << "Course Name: ";
-    cin >> gCourseName;
-    cout << "Course Code: ";
-    cin >> gCourseCode;
-    cout << "Difficulty Level (1-5): ";
-    cin >> gDifficultyLevel;
-    cout << "Research Area: ";
-    cin >> gResearchArea;
-
-    GraduateCourse gCourse(gCourseName, gCourseCode, gDifficultyLevel, gResearchArea);
-    gCourse.displayCourseDetails();
+    if (choice == 1) {
+        cout << "Major: ";
+        cin >> major;
+        Undergraduate ug(sName, sRollNumber, sTotalFee, major);
+        ug.displayData();
+    } else if (choice == 2) {
+        cout << "Research Topic: ";
+        cin >> researchTopic;
+        Graduate grad(sName, sRollNumber, sTotalFee, researchTopic);
+        grad.displayData();
+    } else {
+        cout << "Invalid choice." << endl;
+    }
 
     cout << "\nTotal Students: " << Student::getTotalStudent() << endl;
     cout << "Total Courses: " << Course::getTotalCourses() << endl;

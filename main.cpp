@@ -4,13 +4,14 @@
 
 using namespace std;
 
-class Fee {
+// FeeManager class (SRP: Manages fee-related operations)
+class FeeManager {
 private:
     float totalFee;
     float feePaid;
 
 public:
-    Fee(float totalFee) : totalFee(totalFee), feePaid(0) {}
+    FeeManager(float totalFee) : totalFee(totalFee), feePaid(0) {}
 
     float getTotalFee() const { return totalFee; }
     float getFeePaid() const { return feePaid; }
@@ -25,20 +26,24 @@ public:
     }
 
     void displayFeeDetails() const {
-        cout << "Total Fee: " << totalFee << "\nFee Paid: " << feePaid << "\nRemaining Balance: " << totalFee - feePaid << endl;
+        cout << "Total Fee: " << totalFee 
+             << "\nFee Paid: " << feePaid 
+             << "\nRemaining Balance: " << totalFee - feePaid 
+             << endl;
     }
 };
 
-// Abstract base class
+// Abstract base class for Students (SRP: Manages student details)
 class Student {
 protected:
     string name;
     long long int rollNumber;
-    Fee fee;
+    FeeManager feeManager;
     static int totalStudents;
 
 public:
-    Student(string n, long long int r, float totalFee) : name(n), rollNumber(r), fee(totalFee) {
+    Student(string n, long long int r, float totalFee) 
+        : name(n), rollNumber(r), feeManager(totalFee) {
         totalStudents++;
     }
 
@@ -49,15 +54,17 @@ public:
 
     static int getTotalStudent() { return totalStudents; }
 
-    void makeFeePayment(float amount) { fee.makePayment(amount); }
+    void makeFeePayment(float amount) { feeManager.makePayment(amount); }
 
     // Pure virtual function to enforce overriding in derived classes
     virtual void displayData() const = 0;
+
+    void displayFeeDetails() const { feeManager.displayFeeDetails(); }
 };
 
 int Student::totalStudents = 0;
 
-// Undergraduate class derived from Student (inherits and overrides displayData)
+// Undergraduate class (SRP: Handles undergraduate-specific details)
 class Undergraduate : public Student {
 private:
     string major;
@@ -68,12 +75,13 @@ public:
 
     void displayData() const override {
         cout << "Undergraduate Student Info:\n";
-        cout << "Name: " << name << "\nRoll Number: " << rollNumber << "\nMajor: " << major << endl;
-        fee.displayFeeDetails();
+        cout << "Name: " << name << "\nRoll Number: " << rollNumber 
+             << "\nMajor: " << major << endl;
+        displayFeeDetails();
     }
 };
 
-// Graduate class derived from Student (inherits and overrides displayData)
+// Graduate class (SRP: Handles graduate-specific details)
 class Graduate : public Student {
 private:
     string researchTopic;
@@ -84,8 +92,9 @@ public:
 
     void displayData() const override {
         cout << "Graduate Student Info:\n";
-        cout << "Name: " << name << "\nRoll Number: " << rollNumber << "\nResearch Topic: " << researchTopic << endl;
-        fee.displayFeeDetails();
+        cout << "Name: " << name << "\nRoll Number: " << rollNumber 
+             << "\nResearch Topic: " << researchTopic << endl;
+        displayFeeDetails();
     }
 };
 
@@ -121,8 +130,10 @@ int main() {
     }
 
     if (student) {
-        student->displayData();  // Polymorphic behavior with virtual function
-        delete student;  // Clean up allocated memory
+        student->displayData();  
+        student->makeFeePayment(500);  
+        student->displayFeeDetails();
+        delete student;  
     }
 
     cout << "\nTotal Students: " << Student::getTotalStudent() << endl;

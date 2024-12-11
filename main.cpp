@@ -1,10 +1,9 @@
-#include <vector>
-#include <string>
 #include <iostream>
+#include <string>
 
 using namespace std;
 
-// FeeManager class (SRP: Manages fee-related operations)
+// Base FeeManager class (No changes)
 class FeeManager {
 private:
     float totalFee;
@@ -12,9 +11,6 @@ private:
 
 public:
     FeeManager(float totalFee) : totalFee(totalFee), feePaid(0) {}
-
-    float getTotalFee() const { return totalFee; }
-    float getFeePaid() const { return feePaid; }
 
     void makePayment(float amount) {
         if (amount > 0 && feePaid + amount <= totalFee) {
@@ -33,38 +29,23 @@ public:
     }
 };
 
-// Abstract base class for Students (SRP: Manages student details)
+// Base Student class (No changes)
 class Student {
 protected:
     string name;
     long long int rollNumber;
     FeeManager feeManager;
-    static int totalStudents;
 
 public:
-    Student(string n, long long int r, float totalFee) 
-        : name(n), rollNumber(r), feeManager(totalFee) {
-        totalStudents++;
-    }
+    Student(string n, long long int r, float totalFee)
+        : name(n), rollNumber(r), feeManager(totalFee) {}
 
-    virtual ~Student() { totalStudents--; }
-
-    string getName() const { return name; }
-    long long int getRollNumber() const { return rollNumber; }
-
-    static int getTotalStudent() { return totalStudents; }
-
-    void makeFeePayment(float amount) { feeManager.makePayment(amount); }
-
-    // Pure virtual function to enforce overriding in derived classes
     virtual void displayData() const = 0;
-
+    void makeFeePayment(float amount) { feeManager.makePayment(amount); }
     void displayFeeDetails() const { feeManager.displayFeeDetails(); }
 };
 
-int Student::totalStudents = 0;
-
-// Undergraduate class (SRP: Handles undergraduate-specific details)
+// Existing Undergraduate and Graduate classes (No changes)
 class Undergraduate : public Student {
 private:
     string major;
@@ -81,7 +62,6 @@ public:
     }
 };
 
-// Graduate class (SRP: Handles graduate-specific details)
 class Graduate : public Student {
 private:
     string researchTopic;
@@ -98,45 +78,64 @@ public:
     }
 };
 
+// New PartTimeStudent class (Extending functionality without modifying existing classes)
+class PartTimeStudent : public Student {
+private:
+    int hoursPerWeek;
+
+public:
+    PartTimeStudent(string n, long long int r, float totalFee, int hours)
+        : Student(n, r, totalFee), hoursPerWeek(hours) {}
+
+    void displayData() const override {
+        cout << "Part-Time Student Info:\n";
+        cout << "Name: " << name << "\nRoll Number: " << rollNumber 
+             << "\nHours Per Week: " << hoursPerWeek << endl;
+        displayFeeDetails();
+    }
+};
+
 int main() {
-    string sName, major, researchTopic;
+    Student* student = nullptr;
+    string sName;
     long long int sRollNumber;
     float sTotalFee;
     int choice;
 
-    cout << "Choose type of student:\n1. Undergraduate\n2. Graduate\n";
+    cout << "Choose type of student:\n1. Undergraduate\n2. Graduate\n3. Part-Time\n";
     cin >> choice;
 
-    cout << "Enter details:\n";
-    cout << "Name: ";
+    cout << "Enter Name: ";
     cin >> sName;
-    cout << "Roll Number: ";
+    cout << "Enter Roll Number: ";
     cin >> sRollNumber;
-    cout << "Total Fee: ";
+    cout << "Enter Total Fee: ";
     cin >> sTotalFee;
 
-    Student* student = nullptr;
-
     if (choice == 1) {
-        cout << "Major: ";
+        string major;
+        cout << "Enter Major: ";
         cin >> major;
         student = new Undergraduate(sName, sRollNumber, sTotalFee, major);
     } else if (choice == 2) {
-        cout << "Research Topic: ";
+        string researchTopic;
+        cout << "Enter Research Topic: ";
         cin >> researchTopic;
         student = new Graduate(sName, sRollNumber, sTotalFee, researchTopic);
+    } else if (choice == 3) {
+        int hoursPerWeek;
+        cout << "Enter Hours Per Week: ";
+        cin >> hoursPerWeek;
+        student = new PartTimeStudent(sName, sRollNumber, sTotalFee, hoursPerWeek);
     } else {
         cout << "Invalid choice." << endl;
     }
 
     if (student) {
-        student->displayData();  
-        student->makeFeePayment(500);  
-        student->displayFeeDetails();
-        delete student;  
+        student->displayData();
+        student->makeFeePayment(500);  // Example payment
+        delete student;  // Clean up memory
     }
-
-    cout << "\nTotal Students: " << Student::getTotalStudent() << endl;
 
     return 0;
 }

@@ -3,8 +3,23 @@
 
 using namespace std;
 
-// Base FeeManager class (No changes)
-class FeeManager {
+// Interface for Fee-Handling Operations
+class FeeHandler {
+public:
+    virtual void makeFeePayment(float amount) = 0;
+    virtual void displayFeeDetails() const = 0;
+    virtual ~FeeHandler() {}
+};
+
+// Interface for Student Data Display
+class StudentData {
+public:
+    virtual void displayData() const = 0;
+    virtual ~StudentData() {}
+};
+
+// FeeManager class implements FeeHandler
+class FeeManager : public FeeHandler {
 private:
     float totalFee;
     float feePaid;
@@ -12,7 +27,7 @@ private:
 public:
     FeeManager(float totalFee) : totalFee(totalFee), feePaid(0) {}
 
-    void makePayment(float amount) {
+    void makeFeePayment(float amount) override {
         if (amount > 0 && feePaid + amount <= totalFee) {
             feePaid += amount;
             cout << "Payment of " << amount << " made successfully." << endl;
@@ -21,16 +36,16 @@ public:
         }
     }
 
-    void displayFeeDetails() const {
-        cout << "Total Fee: " << totalFee 
-             << "\nFee Paid: " << feePaid 
-             << "\nRemaining Balance: " << totalFee - feePaid 
+    void displayFeeDetails() const override {
+        cout << "Total Fee: " << totalFee
+             << "\nFee Paid: " << feePaid
+             << "\nRemaining Balance: " << totalFee - feePaid
              << endl;
     }
 };
 
-// Base Student class (No changes)
-class Student {
+// Abstract Student Class combines interfaces
+class Student : public StudentData, public FeeHandler {
 protected:
     string name;
     long long int rollNumber;
@@ -40,12 +55,13 @@ public:
     Student(string n, long long int r, float totalFee)
         : name(n), rollNumber(r), feeManager(totalFee) {}
 
+    void makeFeePayment(float amount) override { feeManager.makeFeePayment(amount); }
+    void displayFeeDetails() const override { feeManager.displayFeeDetails(); }
+
     virtual void displayData() const = 0;
-    void makeFeePayment(float amount) { feeManager.makePayment(amount); }
-    void displayFeeDetails() const { feeManager.displayFeeDetails(); }
 };
 
-// Existing Undergraduate and Graduate classes (No changes)
+// Undergraduate Student
 class Undergraduate : public Student {
 private:
     string major;
@@ -56,12 +72,13 @@ public:
 
     void displayData() const override {
         cout << "Undergraduate Student Info:\n";
-        cout << "Name: " << name << "\nRoll Number: " << rollNumber 
+        cout << "Name: " << name << "\nRoll Number: " << rollNumber
              << "\nMajor: " << major << endl;
         displayFeeDetails();
     }
 };
 
+// Graduate Student
 class Graduate : public Student {
 private:
     string researchTopic;
@@ -72,13 +89,13 @@ public:
 
     void displayData() const override {
         cout << "Graduate Student Info:\n";
-        cout << "Name: " << name << "\nRoll Number: " << rollNumber 
+        cout << "Name: " << name << "\nRoll Number: " << rollNumber
              << "\nResearch Topic: " << researchTopic << endl;
         displayFeeDetails();
     }
 };
 
-// New PartTimeStudent class (Extending functionality without modifying existing classes)
+// Part-Time Student
 class PartTimeStudent : public Student {
 private:
     int hoursPerWeek;
@@ -89,7 +106,7 @@ public:
 
     void displayData() const override {
         cout << "Part-Time Student Info:\n";
-        cout << "Name: " << name << "\nRoll Number: " << rollNumber 
+        cout << "Name: " << name << "\nRoll Number: " << rollNumber
              << "\nHours Per Week: " << hoursPerWeek << endl;
         displayFeeDetails();
     }
@@ -133,8 +150,12 @@ int main() {
 
     if (student) {
         student->displayData();
-        student->makeFeePayment(500);  // Example payment
-        delete student;  // Clean up memory
+        float paymentAmount;
+        cout << "\nEnter Fee Payment Amount: ";
+        cin >> paymentAmount;
+        student->makeFeePayment(paymentAmount);
+        student->displayFeeDetails();
+        delete student;
     }
 
     return 0;
